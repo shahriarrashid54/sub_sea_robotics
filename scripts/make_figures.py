@@ -187,7 +187,7 @@ def fig_detections(run_dir, data_root, out, n=8):
         axes[0, k].set_title(f"detection: {CLASSES[c]} ({s:.2f})", fontsize=9)
         axes[1, k].imshow(img, cmap="gray", origin="lower", vmin=0, vmax=1)
         axes[1, k].imshow(heat, cmap="jet", alpha=0.45, origin="lower")
-        axes[1, k].set_title("Grad-CAM: evidence used by the class head", fontsize=9)
+        axes[1, k].set_title("LayerCAM (stride-16 features): evidence used by the class head", fontsize=9)
         u = torch.nn.functional.interpolate(unc[None], size=img.shape, mode="bilinear", align_corners=False)[0, 0].numpy()
         axes[2, k].imshow(img, cmap="gray", origin="lower", vmin=0, vmax=1)
         axes[2, k].imshow(u, cmap="magma", alpha=0.55, origin="lower", vmin=0, vmax=max(u.max(), 1e-3))

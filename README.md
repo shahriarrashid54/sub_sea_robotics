@@ -44,7 +44,7 @@ constraint, DPCA sway recovery).
 | **Full-physics SAS chain** | 337 kHz / 40 kHz LFM, 16 × 3.75 cm receiver array (public MINSAS-class figures). Pulse-level echo synthesis with element directivity, matched filtering, time-domain back-projection. Measured point response **<!--R:psf_along_20-->1.91<!--/R--> cm along-track at 20 m and <!--R:psf_along_45-->1.95<!--/R--> cm at 45 m** against the theoretical *d/2* = 1.875 cm: range-independent resolution, the defining property of SAS. |
 | **DPCA micronavigation** | Redundant phase-centre cross-correlation recovers a 3 cm platform sway with **<!--R:dpca_rms-->0.09<!--/R--> mm RMS error** and refocuses the image (contrast <!--R:contrast_nom-->1.65<!--/R--> → <!--R:contrast_dpca-->2.10<!--/R-->, truth <!--R:contrast_true-->2.12<!--/R-->). |
 | **Physics-based data generator** | Lambert + specular backscatter from the local grazing angle, *exact* ray-cast acoustic shadows, coherent speckle convolved with the system PSF, range-dependent SNR / TVG residuals, ping drop-outs, striping and motion smear. 3 300 labelled 288² tiles (3 cm pixels) in ~10 min on 4 cores, with highlight **and** shadow boxes, semantic masks, aspect, range, grazing and burial. |
-| **Shadow-aware ATR** | 2.1 M-parameter anchor-free (CenterNet-style) detector with an auxiliary highlight / shadow segmentation head, sonar-specific augmentation (along-track flips only), MC-dropout uncertainty, Grad-CAM. **mAP@0.5 = <!--R:map50-->…<!--/R-->** on <!--R:n_test-->600<!--/R--> test tiles; mine-hunting PD <!--R:pd_milco-->…<!--/R--> at <!--R:fa_milco-->…<!--/R--> false alarms / km². |
+| **Shadow-aware ATR** | 2.1 M-parameter anchor-free (CenterNet-style) detector with an auxiliary highlight / shadow segmentation head, sonar-specific augmentation (along-track flips only), MC-dropout uncertainty, LayerCAM explanations. **mAP@0.5 = <!--R:map50-->…<!--/R-->** on <!--R:n_test-->600<!--/R--> test tiles; mine-hunting PD <!--R:pd_milco-->…<!--/R--> at <!--R:fa_milco-->…<!--/R--> false alarms / km². |
 | **MCM-standard evaluation** | PD vs FA/km² curves, MILCO vs NOMBO confusion, recall by range / grazing / burial / aspect, aspect-binned confusion for planning, calibration (ECE <!--R:ece-->…<!--/R-->). |
 | **Label efficiency** | Masked-autoencoder pre-training on unlabelled tiles: with 10 % of labels, mAP@0.5 <!--R:map_scratch10-->…<!--/R--> from scratch vs **<!--R:map_mae10-->…<!--/R-->** with the pre-trained encoder. |
 | **Real-time deployment** | ONNX export with parity check; `StreamingATR` consumes along-track strips with overlap buffering and cross-tile NMS. **<!--R:tiles_s-->…<!--/R--> tiles/s (<!--R:ms_tile-->…<!--/R--> ms/tile) on 4 CPU threads = <!--R:rt_factor-->…<!--/R-->× real time** for a 2 × 200 m swath at 10 knots (2.3 Mpixel/s at 3 cm). Contacts exported as GeoJSON from towfish navigation. |
@@ -68,7 +68,7 @@ constraint, DPCA sway recovery).
 <p align="center"><img src="assets/detections_test.png" width="100%"></p>
 
 <p align="center"><img src="assets/explainability.png" width="100%"></p>
-<p align="center"><em>Grad-CAM shows the class head using the highlight <b>and</b> the shadow; MC-dropout uncertainty concentrates on ambiguous shapes and clutter.</em></p>
+<p align="center"><em>LayerCAM (a Grad-CAM variant for dense heads) shows the class head using the highlight <b>and</b> the shadow root; MC-dropout uncertainty concentrates on the object edges and ambiguous clutter.</em></p>
 
 ### Operating characteristics
 
