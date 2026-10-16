@@ -31,7 +31,7 @@ def test_planner_respects_budget_and_prefers_uncertain_contacts():
                 Contact2D(1, 50, 150, np.ones(len(CLASSES)) / len(CLASSES), first_aspect_deg=90, est_heading_deg=0),
                 Contact2D(2, -80, 200, rng.dirichlet(np.ones(len(CLASSES))), first_aspect_deg=0, est_heading_deg=45)]
     plan = plan_reacquisition(contacts, model, budget_m=800.0, standoff_m=30, leg_len_m=40)
-    assert plan.total_length_m <= 800.0 * 1.5  # tour length includes turn penalties, selection respects the straight-line budget
+    assert plan.total_length_m <= 800.0       # final tour (incl. turn penalties) respects the budget
     assert 0 in plan.skipped          # the already-certain contact is not revisited
     assert any(leg.contact_id == 1 for leg in plan.legs)
     assert plan.path.shape[1] == 2 and len(plan.path) == 1 + 2 * len(plan.legs)

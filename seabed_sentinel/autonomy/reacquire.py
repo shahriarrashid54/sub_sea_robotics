@@ -160,6 +160,14 @@ def plan_reacquisition(contacts: Sequence[Contact2D], model: AspectConfusionMode
         return ReacquisitionPlan([], [], np.array([start]), 0.0, 0.0, skipped=[c.id for c in contacts])
     order = list(range(len(selected)))
     order, length = _two_opt(selected, order, start, turn_radius_m)
+    # the greedy stage budgets straight-line distance; enforce the budget on the
+    # final tour (which includes turn penalties) by dropping the lowest-gain legs
+    while length > budget_m and len(selected) > 1:
+        drop = int(np.argmin([leg.gain_bits for leg in selected]))
+        per_contact[selected[drop].contact_id] -= 1
+        selected.pop(drop)
+        order, length = _two_opt(selected, list(range(len(selected))), start, turn_radius_m)
+    per_contact = {k: v for k, v in per_contact.items() if v > 0}
     path = [start]
     for k in order:
         path += [selected[k].start, selected[k].end]

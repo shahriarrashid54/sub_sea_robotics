@@ -56,7 +56,7 @@ def main():
         op = base["operating_point"]; mv = base["milco_vs_nombo"]
         lines += ["## Detector (`runs/detector_base`, test split)", "",
                   f"* {summ['params_M']:.2f} M parameters, {summ['epochs']} epochs, {summ['train_time_min']:.0f} min on 4 CPU cores" if summ else "",
-                  f"* **mAP@0.5 = {base['mAP@0.50']:.3f}**, mAP@[.5:.95] = {base['mAP@[.5:.95]']:.3f} on {base['n_images']} tiles / {base['n_gt']} objects ({base['area_km2'] * 1e4:.1f} ha)",
+                  f"* **mAP@0.5 = {base['mAP@0.50']:.3f}**, mAP@[.5:.95] = {base['mAP@[.5:.95]']:.3f} on {base['n_images']} tiles / {base['n_gt']} objects ({base['area_km2'] * 100:.1f} ha)",
                   "* AP@0.5 per class: " + ", ".join(f"{k} {v:.3f}" for k, v in base["AP_per_class@0.50"].items()),
                   f"* Operating point (score ≥ {op['score_thr']}): PD = {op['pd']:.3f} at {op['fa_per_km2']:.0f} FA/km² (all objects); "
                   f"mine-hunting PD = {op['pd_milco']:.3f} at {op['fa_per_km2_milco']:.0f} MILCO FA/km²",
@@ -74,7 +74,7 @@ def main():
                        "fa": f"{op['fa_per_km2']:.0f}", "pd_milco": f"{op['pd_milco']:.3f}", "fa_milco": f"{op['fa_per_km2_milco']:.0f}",
                        "milco_recall": f"{mv['milco_recall']:.3f}", "nombo_rej": f"{mv['nombo_rejection']:.3f}", "ece": f"{base['calibration']['ece']:.3f}",
                        "params": f"{summ['params_M']:.2f}" if summ else "n/a", "train_min": f"{summ['train_time_min']:.0f}" if summ else "n/a",
-                       "n_gt_test": str(base["n_gt"]), "area_ha": f"{base['area_km2'] * 1e4:.1f}"})
+                       "n_gt_test": str(base["n_gt"]), "area_ha": f"{base['area_km2'] * 100:.1f}"})
     hard = load("runs/detector_base/eval_hard/metrics.json")
     if base:
         # second operating point (score 0.5) from the PD/FA curve

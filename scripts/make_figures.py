@@ -89,7 +89,7 @@ def fig_eval(run_dir, data_root, out):
     if hard:
         curves["stress split: all objects"] = hard["pd_fa"]
         curves["stress split: mine-hunting"] = hard["pd_fa_milco"]
-    plot_pd_fa(ax, curves, title=f"PD vs FA/km² — {m['n_images']} in-distribution test tiles ({m['area_km2'] * 1e4:.1f} ha)"
+    plot_pd_fa(ax, curves, title=f"PD vs FA/km² — {m['n_images']} in-distribution test tiles ({m['area_km2'] * 100:.1f} ha)"
                + (f" and {hard['n_images']} out-of-distribution stress tiles" if hard else ""))
     for mm, mk in ((m, "k*"), (hard, "r*")):
         if mm is None:
