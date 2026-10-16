@@ -103,6 +103,9 @@ def fig_eval(run_dir, data_root, out):
     fig, axes = plt.subplots(1, 2, figsize=(13, 5.2))
     plot_confusion(axes[0], np.array(m["confusion"]), title="Class confusion of matched detections (row-normalised)")
     mv = m["milco_vs_nombo"]
+    op = m["operating_point"]
+    th = np.array(m["pd_fa"]["thresholds"]); i5 = int(np.argmin(np.abs(th - 0.5)))
+    pd5, fa5 = m["pd_fa"]["pd"][i5], m["pd_fa"]["fa_per_km2"][i5]
     axes[1].axis("off")
     txt = (f"mAP@0.5 = {m['mAP@0.50']:.3f}     mAP@[.5:.95] = {m['mAP@[.5:.95]']:.3f}\n\n"
            + "\n".join(f"  AP@0.5 {k:15s} {v:.3f}" for k, v in m["AP_per_class@0.50"].items())
@@ -110,7 +113,8 @@ def fig_eval(run_dir, data_root, out):
            f"NOMBO rejection (rock called rock)   {mv['nombo_rejection']:.3f}\n"
            f"MILCO precision                      {mv['milco_precision']:.3f}\n\n"
            f"Operating point (score ≥ {op['score_thr']}):\n  PD = {op['pd']:.3f}   FA = {op['fa_per_km2']:.0f} / km²\n"
-           f"  mine-hunting PD = {op['pd_milco']:.3f}   MILCO FA = {op['fa_per_km2_milco']:.0f} / km²\n\n"
+           f"  mine-hunting PD = {op['pd_milco']:.3f}   MILCO FA = {op['fa_per_km2_milco']:.0f} / km²\n"
+           f"Operating point (score ≥ 0.5):\n  PD = {pd5:.3f}   FA = {fa5:.0f} / km²\n\n"
            f"Calibration ECE = {m['calibration']['ece']:.3f}")
     axes[1].text(0.0, 0.98, txt, family="monospace", fontsize=10, va="top")
     fig.tight_layout(); fig.savefig(os.path.join(out, "confusion.png"), dpi=110); plt.close(fig)

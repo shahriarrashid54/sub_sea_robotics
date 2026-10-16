@@ -92,7 +92,7 @@ def pretrain_mae(cfg: MAEConfig) -> Dict:
             loss.backward()
             opt.step()
             sched.step()
-            tot += float(loss)
+            tot += loss.item()
             nb += 1
         hist.append({"epoch": ep, "loss": tot / nb})
         print(f"[mae] epoch {ep}/{cfg.epochs} masked-MSE {tot / nb:.4f}", flush=True)

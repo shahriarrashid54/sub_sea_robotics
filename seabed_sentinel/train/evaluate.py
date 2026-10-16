@@ -285,7 +285,7 @@ def evaluate_model(model, dataset, batch_size: int = 16, device: str = "cpu", ou
     metrics["confusion"] = cm.tolist()
     metrics["milco_vs_nombo"] = milco_confusion(cm)
     metrics["by_range"] = recall_breakdown(preds, gts, "range_m", [0, 40, 70, 100, 140, 260], score_thr=score_thr)
-    metrics["by_burial"] = recall_breakdown(preds, gts, "burial", [-0.01, 0.001, 0.2, 0.4, 0.61], score_thr=score_thr)
+    metrics["by_burial"] = recall_breakdown(preds, gts, "burial", [-0.01, 0.001, 0.2, 0.4, 0.6, 0.76], score_thr=score_thr)
     metrics["by_aspect"] = recall_breakdown(preds, gts, "aspect_deg", [0, 30, 60, 90, 120, 150, 180.1], score_thr=score_thr)
     metrics["by_grazing"] = recall_breakdown(preds, gts, "grazing_deg", [0, 4, 7, 12, 20, 90], score_thr=score_thr)
     metrics["calibration"] = expected_calibration_error(preds, gts)
