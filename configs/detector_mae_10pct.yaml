@@ -1,0 +1,13 @@
+# Label-efficiency experiment: 10 % of the labelled tiles, encoder initialised
+# from self-supervised MAE pre-training on the unlabelled tiles.
+data_root: data/sas_synth
+out_dir: runs/detector_mae_10pct
+epochs: 40
+batch_size: 16
+lr: 0.002
+label_fraction: 0.1
+crop: 256
+num_workers: 3
+seed: 0
+threads: 4
+init_from: runs/mae/encoder.pt

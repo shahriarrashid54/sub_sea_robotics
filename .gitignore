@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+# generated data and training runs (re-create with `make data` / `make train`)
+data/
+runs/
+!runs/**/metrics.json
+!runs/**/summary.json
+!runs/**/log.csv
+!runs/**/config.json
+*.onnx
+*.pt
+.DS_Store

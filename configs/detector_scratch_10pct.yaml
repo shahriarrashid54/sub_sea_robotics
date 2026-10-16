@@ -1,0 +1,11 @@
+# Label-efficiency experiment: 10 % of the labelled tiles, trained from scratch.
+data_root: data/sas_synth
+out_dir: runs/detector_scratch_10pct
+epochs: 40
+batch_size: 16
+lr: 0.002
+label_fraction: 0.1
+crop: 256
+num_workers: 3
+seed: 0
+threads: 4

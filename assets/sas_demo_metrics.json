@@ -1,0 +1,43 @@
+{
+ "true": {
+  "contrast": 2.1175548011507828,
+  "entropy": 10.187747120343262
+ },
+ "nominal": {
+  "contrast": 1.649710077869511,
+  "entropy": 10.516141431403444
+ },
+ "dpca": {
+  "contrast": 2.0965273091492422,
+  "entropy": 10.191504110251397
+ },
+ "dpca_sway_rms_mm": 0.087399069480543,
+ "sway_amplitude_cm": 3.0,
+ "n_pings": 36,
+ "n_scatterers": 22000,
+ "sonar": {
+  "wavelength_mm": 4.451038575667656,
+  "range_resolution_cm": 1.875,
+  "along_track_resolution_cm": 1.875,
+  "array_length_m": 0.6,
+  "ping_advance_m": 0.2625,
+  "pri_s": 0.13125,
+  "prf_hz": 7.619047619047619,
+  "max_unambiguous_range_m": 98.4375,
+  "beamwidth_deg": 6.80068599561808
+ },
+ "psf": {
+  "20m": {
+   "along_track_m": 0.019141369234393982,
+   "range_m": 0.031330158128493935,
+   "peak_x": 1.1102230246251565e-16,
+   "peak_y": 20.0
+  },
+  "45m": {
+   "along_track_m": 0.019542166712679797,
+   "range_m": 0.02877699402142042,
+   "peak_x": 1.1102230246251565e-16,
+   "peak_y": 45.0
+  }
+ }
+}

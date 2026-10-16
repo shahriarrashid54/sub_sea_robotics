@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install (CPU torch)
+        run: |
+          python -m pip install --upgrade pip
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check seabed_sentinel tests scripts
+      - name: Unit tests (physics, data, model, deploy, autonomy)
+        run: pytest -q
+      - name: Smoke pipeline (tiny dataset -> 1 epoch -> eval -> ONNX)
+        run: |
+          python -m seabed_sentinel simulate --root /tmp/tiny --n-train 24 --n-val 8 --n-test 8 --workers 2
+          python -m seabed_sentinel train --data-root /tmp/tiny --out-dir /tmp/run --epochs 1 --batch-size 8 --num-workers 0
+          python -m seabed_sentinel evaluate --checkpoint /tmp/run/last.pt --data-root /tmp/tiny --out-dir /tmp/run/eval --num-workers 0
+          python -m seabed_sentinel export --checkpoint /tmp/run/last.pt --out /tmp/run/model.onnx

@@ -1,0 +1,18 @@
+# Baseline detector: full labels, shadow-aware auxiliary segmentation head.
+data_root: data/sas_synth
+out_dir: runs/detector_base
+epochs: 24
+batch_size: 16
+lr: 0.002
+weight_decay: 0.0001
+width: 1.0
+fpn_ch: 64
+aux_seg: true
+dropout: 0.1
+crop: 256
+box_mode: highlight
+label_fraction: 1.0
+num_workers: 3
+seed: 0
+device: cpu
+threads: 4
