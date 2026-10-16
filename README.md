@@ -47,7 +47,7 @@ constraint, DPCA sway recovery).
 | **Shadow-aware ATR** | 2.1 M-parameter anchor-free (CenterNet-style) detector with an auxiliary highlight / shadow segmentation head, sonar-specific augmentation (along-track flips only), MC-dropout uncertainty, LayerCAM explanations. **mAP@0.5 = <!--R:map50-->0.994<!--/R-->** on <!--R:n_test-->600<!--/R--> in-distribution test tiles; at score ≥ 0.5, PD <!--R:pd50-->0.952<!--/R--> at <!--R:fa50-->45<!--/R--> false alarms / km²; MILCO recall <!--R:milco_recall-->0.998<!--/R-->, NOMBO rejection <!--R:nombo_rej-->0.997<!--/R-->. |
 | **Out-of-distribution stress test** | Same checkpoint on a harder split it never saw (SNR 0–10 dB, burial up to 75 %, dense rock clutter, more drop-outs / smear): **mAP@0.5 = <!--R:hard_map50-->0.964<!--/R-->**, PD <!--R:hard_pd50-->0.867<!--/R--> at <!--R:hard_fa50-->156<!--/R--> FA/km² (score ≥ 0.5) — a quantified robustness margin rather than a saturated in-distribution number. |
 | **MCM-standard evaluation** | PD vs FA/km² curves, MILCO vs NOMBO confusion, recall by range / grazing / burial / aspect, aspect-binned confusion for planning, calibration (ECE <!--R:ece-->0.072<!--/R-->). |
-| **Label efficiency** | Masked-autoencoder pre-training on unlabelled tiles: with 10 % of labels, mAP@0.5 <!--R:map_scratch10-->0.958<!--/R--> from scratch vs **<!--R:map_mae10-->0.951<!--/R-->** with the pre-trained encoder. |
+| **Label efficiency (negative result, reported as is)** | A convolutional masked auto-encoder pre-trains the same encoder on unlabelled tiles. On this synthetic data it **does not help**: with 2 % of labels (48 tiles) mAP@0.5 is <!--R:map_scratch2-->0.821<!--/R--> from scratch vs <!--R:map_mae2-->0.814<!--/R--> pre-trained, and with 10 % it is <!--R:map_scratch10-->0.958<!--/R--> vs <!--R:map_mae10-->0.951<!--/R-->. The mechanism is in place for real survey data, where unlabelled imagery is abundant and the gap is expected to matter; see the discussion below. |
 | **Real-time deployment** | ONNX export with parity check; `StreamingATR` consumes along-track strips with overlap buffering and cross-tile NMS. **<!--R:tiles_s-->101<!--/R--> tiles/s (<!--R:ms_tile-->9.9<!--/R--> ms/tile) on 4 CPU threads = <!--R:rt_factor-->1.6<!--/R-->× real time** for a 2 × 200 m swath at 10 knots (2.3 Mpixel/s at 3 cm). Contacts exported as GeoJSON from towfish navigation. |
 | **Autonomy** | Aspect-dependent Bayesian multi-look fusion and an information-gain re-acquisition planner (gain per metre under a path budget, 2-opt tour with Dubins-style turn penalty). |
 | **Engineering** | Typed, documented package; 25 unit tests covering physics invariants, data, model, deployment and planning; GitHub Actions CI with a tiny end-to-end smoke pipeline; `make all` reproduces every figure. |
@@ -79,8 +79,10 @@ constraint, DPCA sway recovery).
 
 ### Label efficiency with self-supervision
 
-<p align="center"><img src="assets/label_efficiency.png" width="55%"></p>
+<p align="center"><img src="assets/label_efficiency.png" width="70%"></p>
+<p align="center"><em>MAE pre-training does not improve the detector on synthetic data at 2 % or 10 % label budgets. Likely reasons: the synthetic textures are simple enough that the detection loss alone learns them from a few dozen tiles, and pixel-level reconstruction of speckle rewards low-level statistics rather than the shape / shadow features the detector needs. Next steps I would try: a lower fine-tuning learning rate with the encoder frozen for the first epochs, a contrastive or masked-feature objective instead of pixel MSE, and above all pre-training on real unlabelled survey data where the domain gap is the problem.</em></p>
 <p align="center"><img src="assets/mae_reconstruction.png" width="80%"></p>
+<p align="center"><em>The MAE does learn the imagery: it in-paints shadows and highlights consistently with the sonar geometry.</em></p>
 
 ### Streaming real-time ATR on a long swath
 
@@ -108,6 +110,8 @@ sentinel info                               # default sonar: resolution, PRF, sp
 sentinel simulate --root data/sas_synth --n-train 2400 --n-val 300 --n-test 600   # ~10 min on 4 cores
 sentinel train    --config configs/detector_base.yaml                             # ~1 h on 4 cores
 sentinel evaluate --checkpoint runs/detector_base/best.pt --out-dir runs/detector_base/eval
+sentinel simulate --preset hard --root data/sas_synth --n-test 600                # out-of-distribution stress split
+sentinel evaluate --checkpoint runs/detector_base/best.pt --split test_hard --out-dir runs/detector_base/eval_hard
 sentinel export   --checkpoint runs/detector_base/best.pt --out runs/detector_base/model.onnx
 sentinel stream   --onnx runs/detector_base/model.onnx --out-dir runs/stream      # real-time benchmark + GeoJSON contacts
 sentinel pretrain --epochs 5 && sentinel train --config configs/detector_mae_10pct.yaml
@@ -118,7 +122,7 @@ python scripts/make_figures.py              # all figures in assets/
 make test lint                              # 25 tests + ruff
 ```
 
-`scripts/run_all.sh` chains everything (≈ 2.5 h on a 4-core CPU).
+`scripts/run_all.sh` chains everything, including the stress split and the label-efficiency runs (≈ 3 h on a 4-core CPU).
 
 ### Use it on real sonar data
 

@@ -22,7 +22,7 @@ All numbers below are produced by the code in this repository on **synthetic** d
 ## Detector (`runs/detector_base`, test split)
 
 * 2.11 M parameters, 24 epochs, 56 min on 4 CPU cores
-* **mAP@0.5 = 0.994**, mAP@[.5:.95] = 0.829 on 600 tiles / 983 objects (447.9 ha)
+* **mAP@0.5 = 0.994**, mAP@[.5:.95] = 0.829 on 600 tiles / 983 objects (4.5 ha)
 * AP@0.5 per class: cylinder 0.999, truncated_cone 1.000, wedge 0.984, sphere 1.000, rock 0.986, debris 0.996
 * Operating point (score ≥ 0.3): PD = 0.994 at 714 FA/km² (all objects); mine-hunting PD = 1.000 at 402 MILCO FA/km²
 * MILCO recall 0.998, NOMBO rejection 0.997, MILCO precision 0.998
@@ -48,6 +48,8 @@ All numbers below are produced by the code in this repository on **synthetic** d
 
 | labels | init | mAP@0.5 | mAP@[.5:.95] | PD @ 0.3 | MILCO recall |
 |---|---|---|---|---|---|
+| 2 % | from scratch | 0.821 | 0.480 | 0.812 | 0.996 |
+| 2 % | MAE pre-trained encoder | 0.814 | 0.441 | 0.852 | 0.978 |
 | 10 % | from scratch | 0.958 | 0.642 | 0.956 | 0.995 |
 | 10 % | MAE pre-trained encoder | 0.951 | 0.607 | 0.958 | 0.995 |
 | 100 % | from scratch (reference) | 0.994 | 0.829 | 0.994 | 0.998 |
