@@ -1,0 +1,16 @@
+{
+ "n_contacts": 10,
+ "n_gt_visible": 11,
+ "true_positives": 10,
+ "false_alarms": 0,
+ "recall": 0.9090909090909091,
+ "wall_time_s": 0.6160063743591309,
+ "tiles": 55,
+ "area_rate_m2_s": 2057.7760000000003,
+ "pixel_rate_Mpix_s": 2.286417777777778,
+ "required_tiles_s": 62.02305169753087,
+ "measured_tiles_s": 100.93191149536881,
+ "realtime_factor": 1.6273290128900075,
+ "ms_per_tile": 9.90766929095447,
+ "swath_m2": 1887.4368
+}

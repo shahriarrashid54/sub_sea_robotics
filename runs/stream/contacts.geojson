@@ -1,0 +1,265 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.71198613124286,
+     47.56132523812491
+    ]
+   },
+   "properties": {
+    "contact_id": 0,
+    "class": "truncated_cone",
+    "score": 0.9033,
+    "ground_range_m": 48.93,
+    "side": "starboard",
+    "along_track_row": 350.4342041015625,
+    "box_px": [
+     281.1,
+     334.4,
+     313.4,
+     366.4
+    ],
+    "length_m_est": 0.96,
+    "width_m_est": 0.97
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.711804232479736,
+     47.56136113258832
+    ]
+   },
+   "properties": {
+    "contact_id": 1,
+    "class": "rock",
+    "score": 0.7981,
+    "ground_range_m": 57.83,
+    "side": "starboard",
+    "along_track_row": 720.7801513671875,
+    "box_px": [
+     574.2,
+     701.4,
+     613.6,
+     740.2
+    ],
+    "length_m_est": 1.16,
+    "width_m_est": 1.18
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.71191833027951,
+     47.56142732275531
+    ]
+   },
+   "properties": {
+    "contact_id": 2,
+    "class": "cylinder",
+    "score": 0.7285,
+    "ground_range_m": 46.59,
+    "side": "starboard",
+    "along_track_row": 758.1038818359375,
+    "box_px": [
+     187.9,
+     733.6,
+     250.1,
+     782.6
+    ],
+    "length_m_est": 1.47,
+    "width_m_est": 1.87
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.71163229888149,
+     47.56139317156183
+    ]
+   },
+   "properties": {
+    "contact_id": 3,
+    "class": "debris",
+    "score": 0.9029,
+    "ground_range_m": 66.37,
+    "side": "starboard",
+    "along_track_row": 1065.0947265625,
+    "box_px": [
+     860.9,
+     1047.4,
+     895.9,
+     1082.8
+    ],
+    "length_m_est": 1.06,
+    "width_m_est": 1.05
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.71183441453423,
+     47.5615089498013
+    ]
+   },
+   "properties": {
+    "contact_id": 4,
+    "class": "sphere",
+    "score": 0.8373,
+    "ground_range_m": 46.54,
+    "side": "starboard",
+    "along_track_row": 1126.735107421875,
+    "box_px": [
+     202.2,
+     1111.9,
+     232.6,
+     1141.6
+    ],
+    "length_m_est": 0.89,
+    "width_m_est": 0.91
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.711743398260325,
+     47.56143555644453
+    ]
+   },
+   "properties": {
+    "contact_id": 5,
+    "class": "wedge",
+    "score": 0.6151,
+    "ground_range_m": 56.82,
+    "side": "starboard",
+    "along_track_row": 1034.366943359375,
+    "box_px": [
+     546.3,
+     1015.3,
+     574.3,
+     1053.4
+    ],
+    "length_m_est": 1.14,
+    "width_m_est": 0.84
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.711794179405736,
+     47.561487040631164
+    ]
+   },
+   "properties": {
+    "contact_id": 6,
+    "class": "wedge",
+    "score": 0.4721,
+    "ground_range_m": 50.41,
+    "side": "starboard",
+    "along_track_row": 1117.92578125,
+    "box_px": [
+     328.7,
+     1101.7,
+     364.5,
+     1134.2
+    ],
+    "length_m_est": 0.97,
+    "width_m_est": 1.07
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.711788250975395,
+     47.561566217264605
+    ]
+   },
+   "properties": {
+    "contact_id": 7,
+    "class": "sphere",
+    "score": 0.4875,
+    "ground_range_m": 45.72,
+    "side": "starboard",
+    "along_track_row": 1367.10400390625,
+    "box_px": [
+     178.6,
+     1354.4,
+     201.8,
+     1379.8
+    ],
+    "length_m_est": 0.76,
+    "width_m_est": 0.7
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.711732820862565,
+     47.56162611912698
+    ]
+   },
+   "properties": {
+    "contact_id": 8,
+    "class": "debris",
+    "score": 0.5873,
+    "ground_range_m": 45.31,
+    "side": "starboard",
+    "along_track_row": 1628.7889404296875,
+    "box_px": [
+     162.5,
+     1615.2,
+     190.4,
+     1642.4
+    ],
+    "length_m_est": 0.82,
+    "width_m_est": 0.84
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -52.71153675027118,
+     47.56160226054032
+    ]
+   },
+   "properties": {
+    "contact_id": 9,
+    "class": "wedge",
+    "score": 0.5259,
+    "ground_range_m": 58.9,
+    "side": "starboard",
+    "along_track_row": 1837.86328125,
+    "box_px": [
+     610.9,
+     1825.7,
+     647.8,
+     1850.1
+    ],
+    "length_m_est": 0.73,
+    "width_m_est": 1.11
+   }
+  }
+ ]
+}

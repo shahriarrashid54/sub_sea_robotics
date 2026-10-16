@@ -7,11 +7,10 @@ dist/
 .ruff_cache/
 # generated data and training runs (re-create with `make data` / `make train`)
 data/
-runs/
-!runs/**/metrics.json
-!runs/**/summary.json
-!runs/**/log.csv
-!runs/**/config.json
+# keep the small per-run metrics / logs that docs/RESULTS.md is built from; drop weights and arrays
+runs/**/*.pt
+runs/**/*.npz
+runs/**/*.onnx
 *.onnx
 *.pt
 .DS_Store
