@@ -25,10 +25,15 @@ def cmd_info(args):
 
 
 def cmd_simulate(args):
-    from .sim.dataset_gen import generate_dataset
+    from .sim.dataset_gen import generate_dataset, generate_stress_split
     from .sim.scene import SceneConfig
     cfg = SceneConfig(n_along=args.tile, n_range=args.tile)
     t0 = time.time()
+    if args.preset == "hard":
+        generate_stress_split(args.root, name=args.split_name, n=args.n_test, base_cfg=cfg, workers=args.workers,
+                              seed=args.seed + 9_000_000)
+        _p(f"stress split '{args.split_name}' ({args.n_test} tiles) written to {args.root} in {(time.time() - t0) / 60:.1f} min")
+        return
     generate_dataset(args.root, args.n_train, args.n_val, args.n_test, cfg=cfg, workers=args.workers, seed=args.seed)
     _p(f"dataset written to {args.root} in {(time.time() - t0) / 60:.1f} min")
 
@@ -166,7 +171,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--root", default="data/sas_synth"); s.add_argument("--n-train", type=int, default=2400)
     s.add_argument("--n-val", type=int, default=300); s.add_argument("--n-test", type=int, default=600)
     s.add_argument("--tile", type=int, default=288); s.add_argument("--workers", type=int, default=4)
-    s.add_argument("--seed", type=int, default=0); s.set_defaults(fn=cmd_simulate)
+    s.add_argument("--seed", type=int, default=0)
+    s.add_argument("--preset", choices=("default", "hard"), default="default",
+                   help="'hard' renders only an out-of-distribution stress split (low SNR, heavy burial, dense clutter)")
+    s.add_argument("--split-name", default="test_hard"); s.set_defaults(fn=cmd_simulate)
 
     s = sp.add_parser("train", help="train the detector")
     s.add_argument("--config", default=None)

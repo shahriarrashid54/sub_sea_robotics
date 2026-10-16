@@ -77,6 +77,27 @@ def main():
                        "milco_recall": f"{mv['milco_recall']:.3f}", "nombo_rej": f"{mv['nombo_rejection']:.3f}", "ece": f"{base['calibration']['ece']:.3f}",
                        "params": f"{summ['params_M']:.2f}" if summ else "n/a", "train_min": f"{summ['train_time_min']:.0f}" if summ else "n/a",
                        "n_gt_test": str(base["n_gt"]), "area_ha": f"{base['area_km2'] * 1e4:.1f}"})
+    hard = load("runs/detector_base/eval_hard/metrics.json")
+    if base:
+        # second operating point (score 0.5) from the PD/FA curve
+        import numpy as np
+        th = np.array(base["pd_fa"]["thresholds"]); i = int(np.argmin(np.abs(th - 0.5)))
+        values["pd50"] = f"{base['pd_fa']['pd'][i]:.3f}"; values["fa50"] = f"{base['pd_fa']['fa_per_km2'][i]:.0f}"
+        im = int(np.argmin(np.abs(np.array(base["pd_fa_milco"]["thresholds"]) - 0.5)))
+        values["pd50_milco"] = f"{base['pd_fa_milco']['pd'][im]:.3f}"; values["fa50_milco"] = f"{base['pd_fa_milco']['fa_per_km2'][im]:.0f}"
+        lines += [f"* Second operating point (score ≥ 0.5): PD = {values['pd50']} at {values['fa50']} FA/km²; mine-hunting PD = {values['pd50_milco']} at {values['fa50_milco']} MILCO FA/km²", ""]
+    if hard:
+        import numpy as np
+        op = hard["operating_point"]; mv = hard["milco_vs_nombo"]
+        th = np.array(hard["pd_fa"]["thresholds"]); i = int(np.argmin(np.abs(th - 0.5)))
+        lines += ["## Out-of-distribution stress split (`test_hard`: SNR 0–10 dB, burial up to 75 %, dense rock clutter, more artefacts)", "",
+                  f"* Same checkpoint, no re-training: **mAP@0.5 = {hard['mAP@0.50']:.3f}**, mAP@[.5:.95] = {hard['mAP@[.5:.95]']:.3f} on {hard['n_images']} tiles / {hard['n_gt']} visible objects",
+                  f"* PD = {op['pd']:.3f} at {op['fa_per_km2']:.0f} FA/km² (score ≥ 0.3); PD = {hard['pd_fa']['pd'][i]:.3f} at {hard['pd_fa']['fa_per_km2'][i]:.0f} FA/km² (score ≥ 0.5)",
+                  f"* MILCO recall {mv['milco_recall']:.3f}, NOMBO rejection {mv['nombo_rejection']:.3f}; ECE {hard['calibration']['ece']:.3f}",
+                  "* Recall by burial fraction: " + ", ".join(f"{hard['by_burial']['edges'][k]:g}–{hard['by_burial']['edges'][k + 1]:g}: {r:.2f} (n={n})" for k, (r, n) in enumerate(zip(hard["by_burial"]["recall"], hard["by_burial"]["count"]))), ""]
+        values.update({"hard_map50": f"{hard['mAP@0.50']:.3f}", "hard_pd": f"{op['pd']:.3f}", "hard_fa": f"{op['fa_per_km2']:.0f}",
+                       "hard_pd50": f"{hard['pd_fa']['pd'][i]:.3f}", "hard_fa50": f"{hard['pd_fa']['fa_per_km2'][i]:.0f}",
+                       "hard_milco_recall": f"{mv['milco_recall']:.3f}", "hard_nombo_rej": f"{mv['nombo_rejection']:.3f}"})
     if scratch and mae10:
         lines += ["## Label efficiency (10 % of labels = 240 tiles)", "", "| init | mAP@0.5 | PD @ 0.3 | MILCO recall |", "|---|---|---|---|",
                   f"| from scratch | {scratch['mAP@0.50']:.3f} | {scratch['operating_point']['pd']:.3f} | {scratch['milco_vs_nombo']['milco_recall']:.3f} |",

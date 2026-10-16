@@ -103,3 +103,17 @@ def generate_dataset(root: str, n_train: int, n_val: int, n_test: int, cfg: Opti
     with open(os.path.join(root, "dataset_meta.json"), "w") as f:
         json.dump({"classes": CLASSES, "scene_config": asdict(cfg), "render_options": asdict(opts),
                    "seed": seed, "splits": summary}, f, indent=2)
+
+
+HARD_SCENE = dict(p_burial=0.6, max_burial=0.75, rock_field_prob=0.7, small_rock_density=0.2, p_empty=0.1)
+HARD_RENDER = dict(snr_db_range=(0.0, 10.0), p_dropout=0.3, p_striping=0.6, p_smear=0.5, smear_sigma_px=(1.0, 3.0),
+                   tvg_residual_max=0.5)
+
+
+def generate_stress_split(root: str, name: str = "test_hard", n: int = 600, seed: int = 9_000_000,
+                          base_cfg: Optional[SceneConfig] = None, workers: int = 4) -> Dict:
+    """Out-of-distribution stress split: low SNR, heavy burial, dense clutter, more artefacts."""
+    cfg_d = asdict(base_cfg or SceneConfig())
+    cfg_d.update(HARD_SCENE)
+    opts = RenderOptions(**HARD_RENDER)
+    return generate_split(root, name, n, seed, SceneConfig(**cfg_d), opts, workers)

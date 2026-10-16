@@ -82,12 +82,22 @@ def fig_eval(run_dir, data_root, out):
     if not os.path.exists(mp):
         return None
     m = json.load(open(mp))
-    fig, ax = plt.subplots(figsize=(6.5, 5))
-    plot_pd_fa(ax, {"all objects (MILCO + NOMBO), IoU 0.3": m["pd_fa"], "mine-hunting: MILCO PD vs MILCO false alarms": m["pd_fa_milco"]},
-               title=f"PD vs FA/km² on {m['n_images']} test tiles ({m['area_km2'] * 1e6 / 1e4:.1f} ha surveyed)")
-    op = m["operating_point"]
-    ax.plot([op["fa_per_km2"]], [op["pd"]], "k*", ms=12, label=f"operating point (score ≥ {op['score_thr']})")
-    ax.legend(fontsize=8)
+    hp = os.path.join(run_dir, "eval_hard", "metrics.json")
+    hard = json.load(open(hp)) if os.path.exists(hp) else None
+    fig, ax = plt.subplots(figsize=(7.5, 5.2))
+    curves = {"test: all objects (MILCO + NOMBO)": m["pd_fa"], "test: mine-hunting (MILCO PD vs MILCO FA)": m["pd_fa_milco"]}
+    if hard:
+        curves["stress split: all objects"] = hard["pd_fa"]
+        curves["stress split: mine-hunting"] = hard["pd_fa_milco"]
+    plot_pd_fa(ax, curves, title=f"PD vs FA/km² — {m['n_images']} in-distribution test tiles ({m['area_km2'] * 1e4:.1f} ha)"
+               + (f" and {hard['n_images']} out-of-distribution stress tiles" if hard else ""))
+    for mm, mk in ((m, "k*"), (hard, "r*")):
+        if mm is None:
+            continue
+        th = np.array(mm["pd_fa"]["thresholds"]); i = int(np.argmin(np.abs(th - 0.5)))
+        ax.plot([mm["pd_fa"]["fa_per_km2"][i]], [mm["pd_fa"]["pd"][i]], mk, ms=12,
+                label=f"score ≥ 0.5 operating point ({'stress' if mm is hard else 'test'})")
+    ax.legend(fontsize=7.5, loc="lower right")
     fig.tight_layout(); fig.savefig(os.path.join(out, "pd_fa_curves.png"), dpi=110); plt.close(fig)
 
     fig, axes = plt.subplots(1, 2, figsize=(13, 5.2))
@@ -105,8 +115,11 @@ def fig_eval(run_dir, data_root, out):
     axes[1].text(0.0, 0.98, txt, family="monospace", fontsize=10, va="top")
     fig.tight_layout(); fig.savefig(os.path.join(out, "confusion.png"), dpi=110); plt.close(fig)
 
-    fig, axes = plt.subplots(1, 4, figsize=(18, 4))
-    plot_breakdowns(axes, m)
+    rows = [("in-distribution test split", m)] + ([("out-of-distribution stress split (SNR 0–10 dB, burial ≤ 75 %, dense clutter)", hard)] if hard else [])
+    fig, axes = plt.subplots(len(rows), 4, figsize=(18, 4.2 * len(rows)), squeeze=False)
+    for r, (label, mm) in enumerate(rows):
+        plot_breakdowns(axes[r], mm)
+        axes[r, 0].set_title(label, loc="left", fontsize=9, fontweight="bold")
     fig.suptitle("Recall of visible objects by imaging condition (score ≥ 0.3, IoU ≥ 0.5)", fontsize=11)
     fig.tight_layout(); fig.savefig(os.path.join(out, "breakdowns.png"), dpi=110); plt.close(fig)
 

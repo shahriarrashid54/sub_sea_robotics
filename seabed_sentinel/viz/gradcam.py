@@ -23,7 +23,8 @@ class GradCAM:
 
     def _fwd(self, m, i, o):
         self._act = o
-        o.register_hook(self._bwd)
+        if o.requires_grad:          # forward passes under torch.no_grad() must not fail
+            o.register_hook(self._bwd)
 
     def _bwd(self, g):
         self._grad = g
