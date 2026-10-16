@@ -1,0 +1,12 @@
+# Label-efficiency experiment: 2 % of the labelled tiles (48 images), MAE-initialised encoder.
+data_root: data/sas_synth
+out_dir: runs/detector_mae_2pct
+epochs: 100
+batch_size: 16
+lr: 0.002
+label_fraction: 0.02
+crop: 256
+num_workers: 2
+seed: 0
+threads: 4
+init_from: runs/mae/encoder.pt

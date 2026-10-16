@@ -25,8 +25,6 @@ def fmt(v, nd=3):
 def main():
     base = load("runs/detector_base/eval/metrics.json")
     summ = load("runs/detector_base/summary.json")
-    scratch = load("runs/detector_scratch_10pct/eval/metrics.json")
-    mae10 = load("runs/detector_mae_10pct/eval/metrics.json")
     stream = load("runs/stream/stream_report.json")
     sas = load("assets/sas_demo_metrics.json")
     meta = load("data/sas_synth/dataset_meta.json")
@@ -98,14 +96,21 @@ def main():
         values.update({"hard_map50": f"{hard['mAP@0.50']:.3f}", "hard_pd": f"{op['pd']:.3f}", "hard_fa": f"{op['fa_per_km2']:.0f}",
                        "hard_pd50": f"{hard['pd_fa']['pd'][i]:.3f}", "hard_fa50": f"{hard['pd_fa']['fa_per_km2'][i]:.0f}",
                        "hard_milco_recall": f"{mv['milco_recall']:.3f}", "hard_nombo_rej": f"{mv['nombo_rejection']:.3f}"})
-    if scratch and mae10:
-        lines += ["## Label efficiency (10 % of labels = 240 tiles)", "", "| init | mAP@0.5 | PD @ 0.3 | MILCO recall |", "|---|---|---|---|",
-                  f"| from scratch | {scratch['mAP@0.50']:.3f} | {scratch['operating_point']['pd']:.3f} | {scratch['milco_vs_nombo']['milco_recall']:.3f} |",
-                  f"| MAE pre-trained encoder | {mae10['mAP@0.50']:.3f} | {mae10['operating_point']['pd']:.3f} | {mae10['milco_vs_nombo']['milco_recall']:.3f} |"]
+    le_rows = []
+    for pct in (2, 10):
+        for init, label in (("scratch", "from scratch"), ("mae", "MAE pre-trained encoder")):
+            mm = load(f"runs/detector_{init}_{pct}pct/eval/metrics.json")
+            if mm:
+                le_rows.append((pct, label, mm))
+                values[f"map_{init}{pct}"] = f"{mm['mAP@0.50']:.3f}"
+    if le_rows:
+        lines += ["## Label efficiency (same test split; 2 % = 48 tiles, 10 % = 240 tiles)", "",
+                  "| labels | init | mAP@0.5 | mAP@[.5:.95] | PD @ 0.3 | MILCO recall |", "|---|---|---|---|---|---|"]
+        for pct, label, mm in le_rows:
+            lines.append(f"| {pct} % | {label} | {mm['mAP@0.50']:.3f} | {mm['mAP@[.5:.95]']:.3f} | {mm['operating_point']['pd']:.3f} | {mm['milco_vs_nombo']['milco_recall']:.3f} |")
         if base:
-            lines.append(f"| 100 % labels (reference) | {base['mAP@0.50']:.3f} | {base['operating_point']['pd']:.3f} | {base['milco_vs_nombo']['milco_recall']:.3f} |")
+            lines.append(f"| 100 % | from scratch (reference) | {base['mAP@0.50']:.3f} | {base['mAP@[.5:.95]']:.3f} | {base['operating_point']['pd']:.3f} | {base['milco_vs_nombo']['milco_recall']:.3f} |")
         lines.append("")
-        values.update({"map_scratch10": f"{scratch['mAP@0.50']:.3f}", "map_mae10": f"{mae10['mAP@0.50']:.3f}"})
     if stream:
         lines += ["## Streaming real-time ATR (`runs/stream`)", "",
                   f"* Swath {stream['swath_m2']:.0f} m² rendered as one waterfall, streamed in strips; {stream['tiles']} tiles of 256² with 64 px overlap",

@@ -204,25 +204,26 @@ def fig_detections(run_dir, data_root, out, n=8):
 
 def fig_label_efficiency(runs_root, out):
     rows = []
-    for name, label in (("detector_scratch_10pct", "from scratch"), ("detector_mae_10pct", "MAE pre-trained")):
-        mp = os.path.join(runs_root, name, "eval", "metrics.json")
-        if os.path.exists(mp):
-            m = json.load(open(mp))
-            rows.append((label, m["mAP@0.50"], m["operating_point"]["pd"]))
+    for pct in (2, 10):
+        for init, label in (("scratch", "from scratch"), ("mae", "MAE pre-trained")):
+            mp = os.path.join(runs_root, f"detector_{init}_{pct}pct", "eval", "metrics.json")
+            if os.path.exists(mp):
+                m = json.load(open(mp))
+                rows.append((f"{pct} % labels\n{label}", m["mAP@0.50"], m["operating_point"]["pd"]))
     full = os.path.join(runs_root, "detector_base", "eval", "metrics.json")
     if os.path.exists(full):
         m = json.load(open(full))
-        rows.append(("100 % labels (reference)", m["mAP@0.50"], m["operating_point"]["pd"]))
+        rows.append(("100 % labels\n(reference)", m["mAP@0.50"], m["operating_point"]["pd"]))
     if len(rows) < 2:
         return None
-    fig, ax = plt.subplots(figsize=(7, 4.2))
+    fig, ax = plt.subplots(figsize=(9, 4.4))
     xs = np.arange(len(rows))
-    ax.bar(xs - 0.18, [r[1] for r in rows], 0.36, label="mAP@0.5", color="#3b7dd8")
-    ax.bar(xs + 0.18, [r[2] for r in rows], 0.36, label="PD @ score 0.3", color="#f28e2b")
+    ax.bar(xs - 0.18, [r[1] for r in rows], 0.36, label="test mAP@0.5", color="#3b7dd8")
+    ax.bar(xs + 0.18, [r[2] for r in rows], 0.36, label="test PD @ score 0.3", color="#f28e2b")
     for x, r in zip(xs, rows):
-        ax.text(x - 0.18, r[1] + 0.01, f"{r[1]:.2f}", ha="center", fontsize=8); ax.text(x + 0.18, r[2] + 0.01, f"{r[2]:.2f}", ha="center", fontsize=8)
-    ax.set_xticks(xs); ax.set_xticklabels([r[0] for r in rows]); ax.set_ylim(0, 1.05); ax.legend(fontsize=8); ax.grid(axis="y", alpha=0.3)
-    ax.set_title("Label efficiency: 10 % of labels (240 tiles), with / without self-supervised MAE pre-training", fontsize=10)
+        ax.text(x - 0.18, r[1] + 0.01, f"{r[1]:.3f}", ha="center", fontsize=8); ax.text(x + 0.18, r[2] + 0.01, f"{r[2]:.3f}", ha="center", fontsize=8)
+    ax.set_xticks(xs); ax.set_xticklabels([r[0] for r in rows], fontsize=8); ax.set_ylim(0, 1.08); ax.legend(fontsize=8, loc="lower right"); ax.grid(axis="y", alpha=0.3)
+    ax.set_title("Label efficiency on synthetic data: detector trained on 2 % (48 tiles) / 10 % (240 tiles) of labels, with and without MAE pre-training", fontsize=9)
     fig.tight_layout(); fig.savefig(os.path.join(out, "label_efficiency.png"), dpi=110); plt.close(fig)
     mae = os.path.join(runs_root, "mae", "mae_full.pt")
     if os.path.exists(mae):
